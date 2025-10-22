@@ -249,17 +249,15 @@
         clickSound.volume = 0.5;
         scareMusic.volume = 0;
         
-        // Start background music on first interaction
-        let musicStarted = false;
-        
-        function startMusic() {
-            if (!musicStarted) {
-                bgMusic.play()
-                    .then(() => console.log('Background music started successfully'))
-                    .catch(e => console.log('Background music failed:', e));
-                musicStarted = true;
-            }
-        }
+        // Try to start background music immediately
+        bgMusic.play().catch(e => {
+            console.log('Autoplay blocked - will start on first interaction:', e);
+            // If autoplay is blocked, start on first click
+            document.addEventListener('click', function startOnClick() {
+                bgMusic.play();
+                document.removeEventListener('click', startOnClick);
+            }, { once: true });
+        });
 
         function displayQuestion() {
             const questionEl = document.getElementById('question');
@@ -287,7 +285,6 @@
         }
 
         function selectAnswer(choice) {
-            startMusic();
             clickSound.currentTime = 0;
             clickSound.play().catch(e => console.log('Click sound failed:', e));
             
@@ -343,7 +340,7 @@
                 currentQuestion = 0;
                 answers = [];
                 displayQuestion();
-            }, 3000);
+            }, 10000); // Extended to 10 seconds for debugging
         }
 
         displayQuestion();
