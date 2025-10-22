@@ -222,20 +222,14 @@
         // Try multiple image formats
         function loadImage(baseName) {
             const extensions = ['.JPG', '.jpg', '.JPEG', '.jpeg', '.PNG', '.png', '.GIF', '.gif', '.webp'];
-            const img = new Image();
             
-            function tryNextFormat(index) {
-                if (index >= extensions.length) {
-                    console.error('Could not load image:', baseName);
-                    return;
-                }
-                
-                img.src = baseName + extensions[index];
-                img.onerror = () => tryNextFormat(index + 1);
+            for (let ext of extensions) {
+                const testSrc = baseName + ext;
+                console.log('Trying image path:', testSrc);
             }
             
-            tryNextFormat(0);
-            return img.src;
+            // Return the first attempt (.JPG)
+            return baseName + '.JPG';
         }
 
         let currentQuestion = 0;
