@@ -299,17 +299,30 @@
         }
 
         function triggerJumpscare() {
+            console.log('Triggering jumpscare...');
+            
             // Calculate which jumpscare based on binary path through answers
             // Each answer is 0 or 1, creating a unique path from 0-7
             const score = answers[0] * 1 + answers[1] * 2 + answers[2] * 4;
             const scareIndex = score % 8;
             
+            console.log('Score:', score, 'Index:', scareIndex, 'Image:', jumpscares[scareIndex]);
+            
             const quizEl = document.getElementById('quiz');
             const jumpscareEl = document.getElementById('jumpscare');
             const scareImage = document.getElementById('scareImage');
             
+            // Hide quiz
             quizEl.style.display = 'none';
-            scareImage.src = loadImage(jumpscares[scareIndex]);
+            
+            // Set image source
+            const imageSrc = loadImage(jumpscares[scareIndex]);
+            console.log('Loading image:', imageSrc);
+            scareImage.src = imageSrc;
+            
+            // Show jumpscare immediately
+            jumpscareEl.style.display = 'flex';
+            jumpscareEl.classList.add('active');
             
             // Fade out background music and start building scare music
             bgMusic.volume = 0.1;
@@ -327,12 +340,9 @@
             }, 50);
             
             setTimeout(() => {
-                jumpscareEl.classList.add('active');
-            }, 500);
-            
-            setTimeout(() => {
                 clearInterval(volumeInterval);
                 jumpscareEl.classList.remove('active');
+                jumpscareEl.style.display = 'none';
                 scareMusic.pause();
                 scareMusic.currentTime = 0;
                 bgMusic.volume = 0.3;
